@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="https://e7.pngegg.com/pngimages/6/979/png-clipart-spring-framework-computer-icons-spring-web-flow-java-advancement-leaf-logo.png">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <title>Admin panel</title>
+
+</head>
+<body class="bg-light">
+
+
+<header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-md-3 cl-lg-2 me-0 px-3" href="#">
+    <div style="display: flex; justify-content: space-between;">
+      <strong> <p sec:authentication="name"  ></p> </strong>
+      &ensp;with roles:  &ensp; <br/> <p th:each="role : ${newRoles}" th:text="${role}"
+      th:value="${user.roles}"></p>
+    </div>
+  </a>
+  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <ul class="navbar-nav px-3">
+    <li class="nav-item text-nowrap">
+      <a class="nav-link" th:href="@{/logout}">Выйти</a>
+    </li>
+  </ul>
+</header>
+
+<div class="container-fluid  ">
+  <div class="row  ">
+    <nav id="sidebarMenu" class="col-md-3 col-lg-2 bg-white d-md-block sidebar collapse vh-100 d-inline-block ">
+      <div class="position-sticky pt-3">
+        <ul class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#AdminPanel" data-toggle="tab"  >
+            <span data-feather="home"></span>
+            Admin
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " aria-current="page" href="#UserPanel" data-toggle="tab">
+            <span data-feather="file"></span>
+            User
+          </a>
+        </li>
+        </ul>
+      </div>
+    </nav >
+
+    <div class= "tab-content col-md-9 ">
+      <div role="tabpanel" class="tab-pane bg-light active" id="AdminPanel">
+        <br/>
+        <h3>
+          Admin panel
+        </h3>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Admin</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">User</a>
+          </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content border">
+          <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <h3>
+              All users
+            </h3>
+            <table class="table table-striped p-3 mb-2 bg-white text-dark">
+              <thead class="bg-white">
+              <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Имя</th>
+                <th scope="col">Фамилия</th>
+                <th scope="col">Возраст</th>
+                <th scope="col">Изменить</th>
+                <th scope="col">Удалить</th>
+              </tr>
+              </thead>
+              <tbody>
+
+              <div th:each="user:${users}">
+                <tr>
+                <td  th:text="${user.id}"> id</td>
+                <td  th:text="${user.username}">name</td>
+                <td  th:text="${user.surname}">surname</td>
+                <td  th:text="${user.age}">age</td>
+                <td> <button type="button" class="btn btn-info btn-sm "  data-toggle="modal"  th:data-target="${'#editUser'+user.id}">Изменить</button>
+
+                  <div th:id="${'editUser' + user.id}" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" >
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <form  action="#" th:method="PATCH" th:action="@{/admin/{id}(id=${user.getId()})}" th:object="${user}">
+                          <div class="modal-header">
+                            <h5 class="modal-title" data-id="modalStaticBackdropLabel">Изменить</h5>
+                            <button type="button" class="close" aria-label="Close" data-dismiss="modal">x</button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="container bg-white text-center col-md-12 ">
+
+                              <label for="name" > <strong>Имя</strong> </label>
+                              <input th:type="text" th:value="${user.username}" name="username" class="form-control" id="name" placeholder="Введите имя" required >
+
+                              <label for="surname" > <strong>Фамилия</strong> </label>
+                              <input th:type="text" th:value="${user.surname}" name="surname" class="form-control" data-id="surname" placeholder="Введите фамилия" required >
+
+                              <label for="age" > <strong>возраст</strong> </label>
+                              <input th:type="number" th:value="${user.age}" name="age" class="form-control" data-id="age" placeholder="Введите возраст" required >
+
+                              <label for="password" > <strong>пароль</strong> </label>
+                              <input th:type="password" th:value="${user.password}" name="password" class="form-control" data-id="password" placeholder="Введите пароль" required>
+                              <div class="form-group">
+                                <label for="roles"> <strong>Role</strong></label>
+                                <select multiple class="form-control" size="2" data-id="roles"
+                                        th:name="roles"  required>
+
+                                  <option th:each="role : ${roles}"
+                                          th:selected="${user.roles.contains(role)}"
+                                          th:value="${role.id}">
+
+                                    <th:block th:text="${role.name}"></th:block>
+                                  </option>
+
+                                </select>
+
+                              </div>
+
+                              <br>
+                              <br>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-primary">Изменить</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+
+                </td>
+                <td>
+                  <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" th:data-target="${'#deleteUser'+user.id}">Удалить</button>
+                  <div th:id="${'deleteUser' + user.id}" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <form th:method="DELETE" th:action="@{/admin/{id}(id=${user.getId()})}">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="modalStaticBackdropLabel">Удалить</h5>
+                          <button type="button" class="close" aria-label="Close" data-dismiss="modal">x</button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="container bg-white text-center col-md-12 ">
+                            <label for="id" > <strong>ID</strong> </label>
+                            <input th:type="text" th:value="${user.id}" name="id" class="form-control" id="id" placeholder="" disabled >
+
+                            <label for="username" > <strong>Имя</strong> </label>
+                            <input th:type="text" th:value="${user.username}" class="form-control" id="username" placeholder="" disabled >
+
+                            <label for="surname" > <strong>Фамилия</strong> </label>
+                            <input th:type="text" th:value="${user.surname}" class="form-control" id="surname" placeholder="" disabled >
+
+                            <label for="age" > <strong>возраст</strong> </label>
+                            <input th:type="text" th:value="${user.age}" class="form-control" id="age" placeholder="" disabled >
+
+                            <label for="password" > <strong>пароль</strong> </label>
+                            <input type="password" class="form-control" id="password" placeholder="****" disabled >
+                            <div class="form-group">
+                              <label for="roles"> <strong>Role</strong></label>
+                              <select multiple class="custom-select w-100" size="2" id="roles"
+                                      name="roles" th:field="*{roles}" disabled>
+                                <option th:each="role : ${user.roles}" th:text="${role.getName()}"
+                                        th:value="${user.roles}">
+                                </option>
+                              </select>
+
+                            </div>
+                            <br>
+                            <br>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                          <button type="submit" class="btn btn-danger">Удалить</button>
+                        </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                </td>
+                </tr>
+              </div>
+              </tbody>
+            </table>
+
+          </div>
+
+          <div class="tab-pane bg-white" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+
+            <h4 class="bg-light border">Add new user</h4>
+            <br>
+            <div class="container bg-white text-center col-md-4 ">
+              <form action="#" th:method="POST" th:action="@{/admin}" th:object="${newUser}" >
+              <label for="username" > <strong>Имя </strong> </label>
+              <input th:type="text"  th:field="*{name}" class="form-control" data-id="username" placeholder="Введите имя" required>
+
+              <label for="surname" > <strong>Фамилия </strong> </label>
+              <input th:type="text" th:field="*{surname}" class="form-control" data-id="surname" placeholder="Введите фамилия" required >
+
+              <label for="age" > <strong>Возраст </strong> </label>
+              <input th:type="number" th:field="*{age}" class="form-control" data-id="age" placeholder="Введите возраст" required >
+
+
+              <label for="password" > <strong>password</strong> </label>
+              <input th:type="password" th:field="*{password}" class="form-control" data-id="password" placeholder="Введите пароль" required >
+              <div class="form-group">
+                <label for="roles"> <strong>Role</strong></label>
+                <select multiple class="form-control" data-id="roles">
+                  <option value="ROLE_USER">USER</option>
+                  <option value="ROLE_ADMIN">ADMIN</option>
+                </select>
+
+              </div>
+              <button type="button btn-sm " class="btn btn-success col-md-6">Добавить</button>
+              <br>
+              <br>
+              </form>
+            </div>
+
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+      <div role="tabpanel" class="tab-pane bg-light" id="UserPanel">
+        <br>
+        <h3>
+          Информация о пользователе
+        </h3>
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Имя</th>
+            <th scope="col">Фамилия</th>
+            <th scope="col">Возраст</th>
+            <th scope="col">Роль</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th scope="row"> <p style="display:inline" th:text="${user.getId()}" data-id="id">UserId</p> </th>
+            <td><p style="display:inline" th:text="${user.getName()}">UserName</p></td>
+            <td><p style="display:inline" th:text="${user.getSurname()}">UserSurname</p></td>
+            <td><p style="display:inline" th:text="${user.getAge}">UserAge</p></td>
+            <td> <p style="display:inline" th:each="role : ${newRoles}" th:text="${role}"
+                    th:value="${user.roles}" > Role   </p></td>
+
+          </tr>
+
+
+          </tbody>
+        </table>
+
+
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous"></script><script src="dashboard.js"></script>
+
+<script src="/docs/5.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
